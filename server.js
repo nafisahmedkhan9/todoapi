@@ -1,37 +1,22 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var PORT = process.env.PORT || 3000 ;
-var todos = [{
-		id : 1 ,
-		name : "nafis",
-		suename : "khan"
-	},
-	{
-		id : 2 ,
-		name : "javed",
-		suename : "ahmed"
-	},
-	{
-		id : 3 ,
-		name : "shamshad",
-		suename : "chaudhry"
-	},
-	{
-		id : 4 ,
-		name : "ismail",
-		suename : "shaikh"
-	}
-];
+var nextId = 1 ;
+var todos = [];
+
+app.use(bodyParser.json());
+
 app.get('/',function(req,res){
-	console.log("Hit /(ROOT) !");
+	console.log("GET Request Hit /(ROOT) !");
 	res.send('To Do API ROOT');
 });
 app.get('/data',function(req,res){
-	console.log("Hit /data !");
+	console.log("GET Request Hit /data !");
 	res.json(todos);
 });
 app.get('/data/:id',function(req,res){
-	console.log("Hit /data/:id !");
+	console.log("GET Request Hit /data/:id !");
 	var inputid = parseInt(req.params.id) ;
 	var index;
 	for (var i = 0; i < todos.length; i++) {
@@ -46,6 +31,14 @@ app.get('/data/:id',function(req,res){
 		res.status(404).send();
 	}
 });
+app.post('/data',function(req,res){
+	var body = req.body ;
+	console.log('GET Request HIT /data !');
+	body.id = nextId++;
+	todos.push(body);
+	res.json(body);
+
+})
 app.listen(PORT,function(){
 	console.log("Express Server Is Started "+PORT+" .")
 });
