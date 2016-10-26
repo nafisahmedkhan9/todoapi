@@ -22,15 +22,14 @@ var todos = [{
 		suename : "shaikh"
 	}
 ];
-
 app.get('/',function(req,res){
 	res.send('To Do API ROOT');
 });
 app.get('/data',function(req,res){
 	res.json(todos);
 });
-app.get('/data/id',function(req,res){
-	var inputid = req.params.id ;
+app.get('/data/:id',function(req,res){
+	var inputid = parseInt(req.params.id) ;
 	var index;
 	for (var i = 0; i < todos.length; i++) {
 		if (inputid == todos[i].id) {
