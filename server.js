@@ -23,12 +23,15 @@ var todos = [{
 	}
 ];
 app.get('/',function(req,res){
+	console.log("/(ROOT)");
 	res.send('To Do API ROOT');
 });
 app.get('/data',function(req,res){
+	console.log("/data");
 	res.json(todos);
 });
 app.get('/data/:id',function(req,res){
+	console.log("/data/:id");
 	var inputid = parseInt(req.params.id) ;
 	var index;
 	for (var i = 0; i < todos.length; i++) {
