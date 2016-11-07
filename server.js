@@ -16,7 +16,7 @@ app.get('/data',function(req,res){
 	res.json(todos);
 });
 app.get('/data/:id',function(req,res){
-	console.log("GET Request Hit /data/:id !");
+	console.log("GET Request Hit /data/:id  !");
 	var inputid = parseInt(req.params.id) ;
 	var index;
 	for (var i = 0; i < todos.length; i++) {
