@@ -14,9 +14,17 @@ app.get('/',function(req, res){
 	console.log("GET Request Hit /(ROOT) !");
 });
 
-//get request for /data
+//get request for /data //filter with nature /data?nature=true
 app.get('/data',function(req, res){
-	res.json(todos);
+	var queryParam = req.query ;
+	var filtertodos = todos ;
+	if ( queryParam.hasOwnProperty("nature") && queryParam.nature === "true" ) {
+		filtertodos = _.where(filtertodos,{nature:true});
+	} else if( queryParam.hasOwnProperty("nature") &&  queryParam.nature === "false") {
+		filtertodos = _.where(filtertodos,{nature:false});	
+	}
+
+	res.json(filtertodos);
 	console.log("GET Request Hit /data !");
 });
 
@@ -84,7 +92,9 @@ app.put('/data/:id',function(req, res){
 
 	_.extend(id_data,checkeddata)
 	res.json(id_data);
-})
+	console.log('PUT Request HIT /data/:id !');
+});
+
 app.listen(PORT,function(){
 	console.log("Express Server Is Started "+PORT+" .")
 });
