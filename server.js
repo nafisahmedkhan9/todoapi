@@ -59,11 +59,32 @@ app.delete('/data/:id',function(req, res){
 });
 
 //put request for /data/:id
-/*app.put('/data/:id',function(req, res){
+app.put('/data/:id',function(req, res){
+	var inputid = parseInt(req.params.id) ;
+	var id_data = _.findWhere(todos, {id: inputid});
 	var body = _.pick(req.body,'name','surname','nature') ;
-	var correctdata = {} ;
-	if (body.hasOwnProperty(),) || ) {}
-})*/
+	var checkeddata = {} ;
+	if (body.hasOwnProperty("nature") && _.isBoolean(body.nature)) {
+		checkeddata.nature = body.nature ;
+	}else if (body.hasOwnProperty("nature")) {
+		return res.status(400).send();
+	}
+
+	if ( body.hasOwnProperty("name") && _.isString(body.name) && body.name.trim().length > 0 ) {
+		checkeddata.name = body.name ;
+	}else if (body.hasOwnProperty("name")) {
+		return res.status(400).send();
+	}
+
+	if ( body.hasOwnProperty("surname") && _.isString(body.surname) && body.surname.trim().length > 0 ) {
+		checkeddata.surname = body.surname ;
+	}else if (body.hasOwnProperty("surname")) {
+		return res.status(400).send();
+	}
+
+	_.extend(id_data,checkeddata)
+	res.json(id_data);
+})
 app.listen(PORT,function(){
 	console.log("Express Server Is Started "+PORT+" .")
 });
