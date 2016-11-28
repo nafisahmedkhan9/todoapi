@@ -7,7 +7,6 @@ var nextId = 1 ;
 var todos = [];
 
 app.use(bodyParser.json());
-
 //get request for /
 app.get('/',function(req, res){
 	res.send('To Do API ROOT');
@@ -18,9 +17,9 @@ app.get('/',function(req, res){
 app.get('/data',function(req, res){
 	var queryParam = req.query ;
 	var filtertodos = todos ;
-	if ( queryParam.hasOwnProperty("nature") && queryParam.nature === "true" ) {
+	if ( queryParam.hasOwnProperty("nature") && queryParam.nature == "true" ) {
 		filtertodos = _.where(filtertodos,{nature:true});
-	} else if( queryParam.hasOwnProperty("nature") &&  queryParam.nature === "false") {
+	} else if( queryParam.hasOwnProperty("nature") &&  queryParam.nature == "false") {
 		filtertodos = _.where(filtertodos,{nature:false});	
 	}
 
