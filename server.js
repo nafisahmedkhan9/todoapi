@@ -1,28 +1,33 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var db = require('./db.js');
 var app = express();
 var PORT = process.env.PORT || 3000 ;
 var nextId = 1 ;
 var todos = [];
-
 app.use(bodyParser.json());
+
 //get request for /
 app.get('/',function(req, res){
 	res.send('To Do API ROOT');
 	console.log("GET Request Hit /(ROOT) !");
 });
-
 //get request for /data //filter with nature /data?nature=true
 app.get('/data',function(req, res){
-	var queryParam = req.query ;
+	var queryParams = req.query ;
 	var filtertodos = todos ;
-	if ( queryParam.hasOwnProperty("nature") && queryParam.nature == "true" ) {
+	if ( queryParams.hasOwnProperty("nature") && queryParams.nature == "true" ) {
 		filtertodos = _.where(filtertodos,{nature:true});
-	} else if( queryParam.hasOwnProperty("nature") &&  queryParam.nature == "false") {
+	} else if( queryParams.hasOwnProperty("nature") &&  queryParams.nature == "false") {
 		filtertodos = _.where(filtertodos,{nature:false});	
 	}
 
+	if (queryParams.hasOwnProperty("q") && queryParams.q.length > 0 ) {
+		filtertodos = _.filter(filtertodos, function(todo){
+			return todo.name.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1 ;
+		});
+	}
 	res.json(filtertodos);
 	console.log("GET Request Hit /data !");
 });
@@ -42,14 +47,21 @@ app.get('/data/:id',function(req, res){
 //post request for /data
 app.post('/data',function(req, res){
 	var body = _.pick(req.body,'name','surname','nature') ;
-	body.id = nextId++;	
+
+	db.todo.create(body).then(function(){
+		res.json(body);
+	}),function(e){
+		res.status(400).json(e);
+		console.log("Error : "+e);
+	};
+	/*body.id = nextId++;	
 	if (!_.isBoolean(body.nature) || !_.isString(body.name) || !_.isString(body.surname) || body.name.trim().length == 0 || body.surname.trim().length == 0 ) {
 		res.status(400).send();
 	}	
 	body.name = body.name.trim();
 	body.surname = body.surname.trim();
 	todos.push(body);
-	res.json(body);
+	res.json(body);*/
 	console.log('POST Request HIT /data !');
 });
 
@@ -94,6 +106,9 @@ app.put('/data/:id',function(req, res){
 	console.log('PUT Request HIT /data/:id !');
 });
 
-app.listen(PORT,function(){
-	console.log("Express Server Is Started "+PORT+" .")
-});
+db.sequelize.sync().then(function(){
+		app.listen(PORT,function(){
+		console.log("Express Server Is Started "+PORT+" .")
+	});	
+})
+
