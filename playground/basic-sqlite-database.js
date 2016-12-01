@@ -32,22 +32,22 @@ sequelize.sync({
 }).then(function() {
 	console.log('Everything is synced');
 	Todo.create({
-		name: 'Nafis Ahmedd',
-		surname: 'Khann',
-		nature: false
+		name: ' ',
+		surname: true,
+		nature: "false"
 	}).then(function() {
 		return Todo.create({
 			name: 'NFS',
-			surname: 'Khan',
-			nature: true
+			surname: " ",
+			nature: "hello"
 		});
 	}).then(function() {
 		return Todo.findAll({
-			where: {
+			/*where: {
 				name:{
 					$like : "%s"
 				} 
-			}
+			}*/
 		});
 	}).then(function(todos) {
 		if (todos) {

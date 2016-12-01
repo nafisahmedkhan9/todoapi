@@ -16,7 +16,30 @@ app.get('/',function(req, res){
 //get request for /data //filter with nature /data?nature=true
 app.get('/data',function(req, res){
 	var queryParams = req.query ;
-	var filtertodos = todos ;
+	var where = {};
+	if ( queryParams.hasOwnProperty("nature") && queryParams.nature == "true" ) {
+		where.nature = true;
+	} else if( queryParams.hasOwnProperty("nature") &&  queryParams.nature == "false") {
+		where.nature = false;
+	}
+
+	if (queryParams.hasOwnProperty("q") && queryParams.q.length > 0 ) {
+		where.name ={
+			$like: '%'+queryParams.q+'%'
+		};
+	}
+	if (queryParams.hasOwnProperty("s") && queryParams.s.length > 0 ) {
+		where.surname ={
+			$like: '%'+queryParams.s+'%'
+		};
+	}
+
+	db.todo.findAll({where: where}).then(function(todos){
+		res.json(todos);
+	}, function(e){
+		res.status(500).send();
+	});
+	/*var filtertodos = todos ;
 	if ( queryParams.hasOwnProperty("nature") && queryParams.nature == "true" ) {
 		filtertodos = _.where(filtertodos,{nature:true});
 	} else if( queryParams.hasOwnProperty("nature") &&  queryParams.nature == "false") {
@@ -28,19 +51,30 @@ app.get('/data',function(req, res){
 			return todo.name.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1 ;
 		});
 	}
-	res.json(filtertodos);
+	res.json(filtertodos);*/
 	console.log("GET Request Hit /data !");
 });
 
 //get request for /data/:id
 app.get('/data/:id',function(req, res){
 	var inputid = parseInt(req.params.id) ;
-	var id_data = _.findWhere(todos, {id: inputid});
+	db.todo.findById(inputid).then(function(todo){
+		if(!!todo){
+			res.json(todo.toJSON());
+		}else{
+			res.status(404).send();
+		}
+	}, function(e){
+			res.status(500).send();
+	});
+	
+
+	/*var id_data = _.findWhere(todos, {id: inputid});
 	if (id_data) {
 		res.json(id_data);	
 	}else{
 		res.status(404).send();
-	}
+	}*/
 	console.log("GET Request Hit /data/:id !");
 });
 
@@ -52,7 +86,7 @@ app.post('/data',function(req, res){
 		res.json(body);
 	}),function(e){
 		res.status(400).json(e);
-		console.log("Error : "+e);
+		console.log("Error : "+ e);
 	};
 	/*body.id = nextId++;	
 	if (!_.isBoolean(body.nature) || !_.isString(body.name) || !_.isString(body.surname) || body.name.trim().length == 0 || body.surname.trim().length == 0 ) {
@@ -106,7 +140,7 @@ app.put('/data/:id',function(req, res){
 	console.log('PUT Request HIT /data/:id !');
 });
 
-db.sequelize.sync().then(function(){
+db.sequelize.sync({force: true}).then(function(){
 		app.listen(PORT,function(){
 		console.log("Express Server Is Started "+PORT+" .")
 	});	
