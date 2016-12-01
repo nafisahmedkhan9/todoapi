@@ -1,3 +1,10 @@
+/*for Heroku : cmds
+Heroku addons:create heroku-postgresql:hobb-dev (after this)
+heroku pg:wait (check again for confirmation)
+heroku pg:wait
+install pg: npm install pg --save
+install pg-hstore : npm install pg-hstore --save
+*/
 var Sequelize = require('sequelize');
 var env = process.env.NODE_ENV || 'development';
 var sequelize;
